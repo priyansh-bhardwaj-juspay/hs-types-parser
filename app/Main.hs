@@ -369,7 +369,9 @@ findEntityDefForCons payload@(modulesMap, imports', _) (Qual _ (ModuleName _ ali
 findEntityDefForCons payload@(modulesMap, imports', modName) (UnQual _ cNameT) =
   let cName = getName cNameT
       moduleM = find (\ moduleT -> any (elem cName . (^. #constructors)) (moduleT ^. #types)) . ((modulesMap ! modName):) . map ((modulesMap !) . (^. #_module)) . filter (checkImportForCons payload Nothing cName) $ imports'
-  in (\ ModuleT {name = name'} -> EntityDef name' cName) <$> moduleM
+  in moduleM >>= \ moduleT ->
+     find (elem cName . (^. #constructors)) (moduleT ^. #types) >>=
+     Just . EntityDef (moduleT ^. #name) . (^. #name)
 findEntityDefForCons _ (Special _ _) = Nothing
 
 checkImportForCons :: Payload -> Maybe String -> String -> Import -> Bool
