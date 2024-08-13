@@ -52,9 +52,42 @@ fileModules fname = do
               , ignoreLinePragmas = False
               , extensions =
                   [ EnableExtension PackageImports
+                  , EnableExtension UndecidableInstances
+                  , EnableExtension DeriveAnyClass
+                  , EnableExtension ExplicitForAll
+                  , EnableExtension BangPatterns
+                  , EnableExtension TemplateHaskell
+                  , EnableExtension ConstraintKinds
+                  , EnableExtension DataKinds
+                  , EnableExtension DefaultSignatures
+                  , EnableExtension DeriveFunctor
+                  , EnableExtension DeriveGeneric
+                  -- , EnableExtension DuplicateRecordFields
                   , EnableExtension ExplicitNamespaces
+                  , EnableExtension FlexibleContexts
+                  , EnableExtension FlexibleInstances
+                  , EnableExtension FunctionalDependencies
+                  , EnableExtension GADTs
+                  , EnableExtension LambdaCase
+                  , EnableExtension MultiParamTypeClasses
+                  , EnableExtension MultiWayIf
+                  , EnableExtension NamedFieldPuns
+                  , EnableExtension OverloadedStrings
+                  , EnableExtension PatternSynonyms
+                  , EnableExtension PolyKinds
+                  , EnableExtension RankNTypes
+                  , EnableExtension RecordWildCards
+                  , EnableExtension ScopedTypeVariables
+                  , EnableExtension TupleSections
+                  , EnableExtension TypeApplications
+                  , EnableExtension TypeFamilies
+                  , EnableExtension TypeOperators
+                  , EnableExtension ViewPatterns
+                  , EnableExtension BlockArguments
+                  , EnableExtension StandaloneDeriving
                   ]
               , ignoreLanguagePragmas = False
+              , fixities = Just $ infixl_ 8 ["^."]
               }
           )
           fcontents
@@ -411,7 +444,7 @@ mkDepsDump = foldr (\ (entity, dep) hm -> HM.alter (\ mMod -> Just $ HM.insert (
 
 main :: IO ()
 main = do
-  files <- filter (isSuffixOf ".hs") <$> allFiles "/Users/priyanshbhardwaj/Documents/rust-migration/basic_haskell/"
+  files <- filter (isSuffixOf ".hs") <$> allFiles "/home/priyansh/newton-hs/src/"
   moduleInfo <- mapM fileModules files
   modules' <- mapM parseModuleT moduleInfo
   let moduleNames :: [String] = map (^. #name) modules'
